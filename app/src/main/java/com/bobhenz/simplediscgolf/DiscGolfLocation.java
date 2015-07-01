@@ -13,10 +13,10 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 
-/**
- * Created by bhenz on 6/29/2015.
- */
-public class SimpleDiscGolfLocation extends Service implements LocationListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DiscGolfLocation extends Service implements LocationListener {
 
     protected LocationManager mLocationManager;
     protected Context mActivityContext;
@@ -24,12 +24,12 @@ public class SimpleDiscGolfLocation extends Service implements LocationListener 
     protected Location mCurrentLocation;
 
     // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
+    private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = (float)0.2;
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 1;
+    private static final long MIN_TIME_BW_UPDATES = 1000/2;
 
-    public SimpleDiscGolfLocation(Context context) {
+    public DiscGolfLocation(Context context) {
         mActivityContext = context;
     }
 
@@ -55,8 +55,11 @@ public class SimpleDiscGolfLocation extends Service implements LocationListener 
             }
 
             mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            Log.d("SDGLocation", "Latitude:" + Double.toString(mCurrentLocation.getLatitude()));
-            Log.d("SDGLocation", "Longitude:" + Double.toString(mCurrentLocation.getLongitude()));
+            if (mCurrentLocation != null) {
+                Log.d("SDGLocation", "Latitude:" + Double.toString(mCurrentLocation.getLatitude()));
+                Log.d("SDGLocation", "Longitude:" + Double.toString(mCurrentLocation.getLongitude()));
+                notifyListeners();
+            }
         }
 
     }
@@ -64,7 +67,7 @@ public class SimpleDiscGolfLocation extends Service implements LocationListener 
     public void stop() {
         Log.d("SDGLocation", "stop");
         if(mLocationManager != null) {
-            mLocationManager.removeUpdates(SimpleDiscGolfLocation.this);
+            mLocationManager.removeUpdates(DiscGolfLocation.this);
         }
     }
 
@@ -103,17 +106,34 @@ public class SimpleDiscGolfLocation extends Service implements LocationListener 
         return mCurrentLocation;
     }
 
+    private List<DiscGolfLocationListener> mListenerArray = new ArrayList<DiscGolfLocationListener>();
+
+    public void addListener(DiscGolfLocationListener listener) {
+        mListenerArray.add(listener);
+    }
+
+    public void removeListener(DiscGolfLocationListener listener) {
+        mListenerArray.remove(listener);
+    }
+
+    private void notifyListeners() {
+        for (DiscGolfLocationListener listener : mListenerArray) {
+            listener.onLocationChanged(mCurrentLocation);
+        }
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        Log.d("SDGLocation-changed", "Latitude:" + Double.toString(mCurrentLocation.getLatitude()));
-        Log.d("SDGLocation-changed", "Longitude:" + Double.toString(mCurrentLocation.getLongitude()));
+        if (mCurrentLocation != null) { Log.d("SDGLocation-changed", mCurrentLocation.toString()); }
+        notifyListeners();
     }
 
     @Override
     public void onProviderDisabled(String provider) {
         if (provider == LocationManager.GPS_PROVIDER) {
             mIsGpsEnabled = false;
+            showSettingsAlert();
         }
     }
 

@@ -5,30 +5,32 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 
 public class MainActivity extends Activity {
 
-    private SimpleDiscGolfLocation dgLocation;
+    private DiscGolfLocation mDgLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dgLocation = new SimpleDiscGolfLocation(MainActivity.this);
+        mDgLocation = new DiscGolfLocation(MainActivity.this);
+        final DiscGolfLocationButton button_tee = new DiscGolfLocationButton((Button)findViewById(R.id.id_button_tee), mDgLocation);
     }
 
     @Override
     protected void onResume() {
         Log.d("main", "onResume");
         super.onResume();
-        dgLocation.start();
+        mDgLocation.start();
     }
 
     @Override
     protected void onPause() {
         Log.d("main", "onPause");
-        dgLocation.stop();
+        mDgLocation.stop();
         super.onPause();
     }
 
