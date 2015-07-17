@@ -1,6 +1,7 @@
 package com.bobhenz.simplediscgolf;
 
 import android.location.Location;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,16 +13,36 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
     private Location mMarkedLocation;
     private enum State {UNMARKED, WAITING, MARKED};
     private State mState;
+    private String mId;
+    private String mText;
 
-    public DiscGolfLocationButton(Button button, DiscGolfLocation dgLocation) {
+    public DiscGolfLocationButton(Button button, String id, String text, DiscGolfLocation dgLocation) {
         mDgLocation = dgLocation;
         mButton = button;
         mButton.setOnClickListener(this);
         mDgLocation.addListener(this);
         mState = State.UNMARKED;
+        mId = id;
+        mText = text;
         updateText();
     }
 
+    public void saveState(Bundle state) {
+        Log.d("save-tee-button", "HERE");
+        state.putSerializable("button-state" + mId, mState);
+        state.putParcelable("button-marked-location" + mId, mMarkedLocation);
+        state.putParcelable("button-current-location" + mId, mCurrentLocation);
+    }
+
+    public void restoreState(Bundle state) {
+        Log.d("restore-tee-button", "HERE");
+        if (state != null) {
+            Log.d("RESTORE-tee-button", "HERE");
+            mState = (State)state.getSerializable("tee-button-state");
+            mMarkedLocation = state.getParcelable("tee-button-marked-location");
+            mCurrentLocation = state.getParcelable("tee-button-current-location");
+        }
+    }
     public void onLocationChanged(Location location) {
         if (location.hasAccuracy() && location.getAccuracy() <= 10.0) {
             if (mState == State.WAITING) {
@@ -50,11 +71,11 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
         if (mCurrentLocation != null) { Log.d("updateText:current", mCurrentLocation.toString()); }
 
         if ((mState == State.MARKED) && (mCurrentLocation != null) && (mMarkedLocation != null)) {
-            mButton.setText(String.format("Tee\n(%.2f meters)", mCurrentLocation.distanceTo(mMarkedLocation)));
+            mButton.setText(String.format("%s\n(%.2f meters)", mText, mCurrentLocation.distanceTo(mMarkedLocation)));
         } else if (mState == State.WAITING){
-            mButton.setText("Tee\n(Waiting for GPS accuracy...)");
+            mButton.setText(mText + "\n(Waiting for GPS accuracy...)");
         } else {
-            mButton.setText("Tee\n(Unmarked)");
+            mButton.setText(mText + "\n(Unmarked)");
         }
     }
 }

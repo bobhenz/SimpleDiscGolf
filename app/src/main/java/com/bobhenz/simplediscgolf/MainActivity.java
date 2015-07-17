@@ -11,13 +11,13 @@ import android.widget.Button;
 public class MainActivity extends Activity {
 
     private DiscGolfLocation mDgLocation;
-
+    private DiscGolfLocationButton mButton_tee;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDgLocation = new DiscGolfLocation(MainActivity.this);
-        final DiscGolfLocationButton button_tee = new DiscGolfLocationButton((Button)findViewById(R.id.id_button_tee), mDgLocation);
+        mButton_tee = new DiscGolfLocationButton((Button)findViewById(R.id.id_button_tee), "tee", "Tee", mDgLocation);
     }
 
     @Override
@@ -32,6 +32,18 @@ public class MainActivity extends Activity {
         Log.d("main", "onPause");
         mDgLocation.stop();
         super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        mButton_tee.saveState(state);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+        mButton_tee.restoreState(state);
     }
 
     @Override
