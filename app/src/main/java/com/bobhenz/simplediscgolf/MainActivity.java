@@ -12,12 +12,14 @@ public class MainActivity extends Activity {
 
     private DiscGolfLocation mDgLocation;
     private DiscGolfLocationButton mButton_tee;
+    private DiscGolfLocationButton mButton_basket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDgLocation = new DiscGolfLocation(MainActivity.this);
         mButton_tee = new DiscGolfLocationButton((Button)findViewById(R.id.id_button_tee), "tee", "Tee", mDgLocation);
+        mButton_basket = new DiscGolfLocationButton((Button)findViewById(R.id.id_button_basket), "basket", "Basket", mDgLocation);
     }
 
     @Override
@@ -38,12 +40,14 @@ public class MainActivity extends Activity {
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         mButton_tee.saveState(state);
+        mButton_basket.saveState(state);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         super.onRestoreInstanceState(state);
         mButton_tee.restoreState(state);
+        mButton_basket.restoreState(state);
     }
 
     @Override

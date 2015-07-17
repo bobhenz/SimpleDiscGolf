@@ -38,9 +38,9 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
         Log.d("restore-tee-button", "HERE");
         if (state != null) {
             Log.d("RESTORE-tee-button", "HERE");
-            mState = (State)state.getSerializable("tee-button-state");
-            mMarkedLocation = state.getParcelable("tee-button-marked-location");
-            mCurrentLocation = state.getParcelable("tee-button-current-location");
+            mState = (State)state.getSerializable("button-state" + mId);
+            mMarkedLocation = state.getParcelable("button-marked-location" + mId);
+            mCurrentLocation = state.getParcelable("button-current-location" + mId);
         }
     }
     public void onLocationChanged(Location location) {
