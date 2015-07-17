@@ -71,7 +71,7 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
         if (mCurrentLocation != null) { Log.d("updateText:current", mCurrentLocation.toString()); }
 
         if ((mState == State.MARKED) && (mCurrentLocation != null) && (mMarkedLocation != null)) {
-            mButton.setText(String.format("%s\n(%.2f meters)", mText, mCurrentLocation.distanceTo(mMarkedLocation)));
+            mButton.setText(String.format("%s\n%.2f m", mText, mCurrentLocation.distanceTo(mMarkedLocation)));
         } else if (mState == State.WAITING){
             mButton.setText(mText + "\n(Waiting for GPS accuracy...)");
         } else {
