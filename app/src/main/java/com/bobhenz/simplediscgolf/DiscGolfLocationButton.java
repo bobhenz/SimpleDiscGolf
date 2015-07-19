@@ -67,8 +67,8 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
     }
 
     private void updateText() {
-        if (mMarkedLocation != null) { Log.d("updateText:marked", mMarkedLocation.toString()); }
-        if (mCurrentLocation != null) { Log.d("updateText:current", mCurrentLocation.toString()); }
+        //if (mMarkedLocation != null) { Log.d("updateText:marked", mMarkedLocation.toString()); }
+        //if (mCurrentLocation != null) { Log.d("updateText:current", mCurrentLocation.toString()); }
 
         if ((mState == State.MARKED) && (mCurrentLocation != null) && (mMarkedLocation != null)) {
             mButton.setText(String.format("%s\n%.2f m", mText, mCurrentLocation.distanceTo(mMarkedLocation)));
@@ -77,5 +77,9 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
         } else {
             mButton.setText(mText + "\n(Unmarked)");
         }
+    }
+
+    public Location getMarkedLocation() {
+        return mMarkedLocation;
     }
 }

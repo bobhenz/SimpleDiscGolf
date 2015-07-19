@@ -3,23 +3,26 @@ package com.bobhenz.simplediscgolf;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 
 public class MainActivity extends Activity {
 
     private DiscGolfLocation mDgLocation;
-    private DiscGolfLocationButton mButton_tee;
-    private DiscGolfLocationButton mButton_basket;
+    private DiscGolfHole mHole;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         mDgLocation = new DiscGolfLocation(MainActivity.this);
-        mButton_tee = new DiscGolfLocationButton((Button)findViewById(R.id.id_button_tee), "tee", "Tee", mDgLocation);
-        mButton_basket = new DiscGolfLocationButton((Button)findViewById(R.id.id_button_basket), "basket", "Basket", mDgLocation);
+        setContentView(R.layout.activity_main);
+        mHole = new DiscGolfHole("1", 3, DiscGolfHole.TeeCategory.ADVANCED, mDgLocation, (ViewGroup)findViewById(R.id.top));
+        //mHole.addThrow();
     }
 
     @Override
@@ -39,15 +42,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
-        mButton_tee.saveState(state);
-        mButton_basket.saveState(state);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         super.onRestoreInstanceState(state);
-        mButton_tee.restoreState(state);
-        mButton_basket.restoreState(state);
+    }
+
+    public void onButtonAddThrow(View view) {
+        mHole.addThrow();
     }
 
     @Override

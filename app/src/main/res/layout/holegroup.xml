@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+    <TextView
+        android:id="@+id/id_text_player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player: Bob\nScore: 29\nHole 5"
+        android:textColor="#ffffff"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/button_tee"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tee"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_dark"
+            android:textColor="#ffffff"/>
+
+        <Button
+            android:id="@+id/button_basket"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Bas"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_dark"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <LinearLayout
+            android:id="@+id/throw_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
+    <Button
+        android:id="@+id/button_add_throw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Throw"
+        android:layout_margin="5dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/button_dark"
+        android:textColor="#ffffff"
+        android:onClick="onButtonAddThrow" />
+</LinearLayout>
