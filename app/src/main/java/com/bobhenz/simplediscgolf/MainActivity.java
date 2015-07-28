@@ -1,6 +1,7 @@
 package com.bobhenz.simplediscgolf;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,45 +13,47 @@ import android.widget.Button;
 
 
 public class MainActivity extends Activity {
-
-    private DiscGolfLocation mDgLocation;
-    private DiscGolfHole mHole;
+    public final static String EXTRA_GAME_NEW = "com.bobhenz.simplediscgolf.GAME_NEW";
+    //private DiscGolfLocation mDgLocation;
+    //private DiscGolfHole mHole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDgLocation = new DiscGolfLocation(MainActivity.this);
+        //mDgLocation = new DiscGolfLocation(MainActivity.this);
         setContentView(R.layout.activity_main);
-        mHole = new DiscGolfHole("1", 3, DiscGolfHole.TeeCategory.ADVANCED, mDgLocation, (ViewGroup)findViewById(R.id.top));
+        //mHole = new DiscGolfHole("1", 3, DiscGolfHole.TeeCategory.ADVANCED, mDgLocation, (ViewGroup)findViewById(R.id.top));
         //mHole.addThrow();
     }
 
-    @Override
-    protected void onResume() {
-        Log.d("main", "onResume");
-        super.onResume();
-        mDgLocation.start();
-    }
+    //@Override
+    //protected void onResume() {
+    //    Log.d("main", "onResume");
+    //    super.onResume();
+    //    mDgLocation.start();
+    //}
 
-    @Override
-    protected void onPause() {
-        Log.d("main", "onPause");
-        mDgLocation.stop();
-        super.onPause();
-    }
+    //@Override
+    //protected void onPause() {
+    //    Log.d("main", "onPause");
+    //    mDgLocation.stop();
+    //    super.onPause();
+    //}
 
-    @Override
-    protected void onSaveInstanceState(Bundle state) {
-        super.onSaveInstanceState(state);
-    }
+    //@Override
+    //protected void onSaveInstanceState(Bundle state) {
+    //   super.onSaveInstanceState(state);
+    //}
 
-    @Override
-    protected void onRestoreInstanceState(Bundle state) {
-        super.onRestoreInstanceState(state);
-    }
+    //@Override
+    //protected void onRestoreInstanceState(Bundle state) {
+    //    super.onRestoreInstanceState(state);
+    //}
 
-    public void onButtonAddThrow(View view) {
-        mHole.addThrow();
+    public void onButtonGameStart(View view) {
+        Intent intent = new Intent(getApplicationContext(), DiscGolfHoleActivity.class);
+        intent.putExtra(EXTRA_GAME_NEW, true);
+        startActivity(intent);
     }
 
     @Override

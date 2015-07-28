@@ -1,5 +1,6 @@
 package com.bobhenz.simplediscgolf;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
@@ -29,7 +30,8 @@ public class DiscGolfHole implements DiscGolfThrow.ChangeCallbacks {
         return mLayout;
     }
 
-    public DiscGolfHole(String name, int par, TeeCategory category, DiscGolfLocation dgl, ViewGroup parentView) {
+
+    public DiscGolfHole(String name, int par, TeeCategory category, DiscGolfLocation dgl, ViewGroup layout) {
         if (name.isEmpty()) {
             name = "1";
         }
@@ -46,12 +48,10 @@ public class DiscGolfHole implements DiscGolfThrow.ChangeCallbacks {
         mTeeCategory = category;
         mPar = par;
         mDgLocation = dgl;
-        Context context = parentView.getContext();
-        mLayout = LayoutInflater.from(context).inflate(R.layout.holegroup, parentView, false);
+        mLayout = layout;
         mTeeButton = new DiscGolfLocationButton((Button)mLayout.findViewById(R.id.button_tee), "tee", "Tee", mDgLocation);
         mBasketButton = new DiscGolfLocationButton((Button)mLayout.findViewById(R.id.button_basket), "basket", "Basket", mDgLocation);
         mThrowGroup = (ViewGroup)mLayout.findViewById(R.id.throw_group);
-        parentView.addView(mLayout);
         for (int count = 0; count < mPar; count++) {
             addThrow();
         }

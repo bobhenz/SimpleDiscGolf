@@ -24,10 +24,10 @@ public class DiscGolfLocation extends Service implements LocationListener {
     protected Location mCurrentLocation;
 
     // The minimum distance to change Updates in meters
-    private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = (float)0.2;
+    //private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000/2;
+   //private static final long MIN_TIME_BW_UPDATES = 0;
 
     public DiscGolfLocation(Context context) {
         mActivityContext = context;
@@ -44,15 +44,15 @@ public class DiscGolfLocation extends Service implements LocationListener {
         }
 
         if (mLocationManager != null) {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    MIN_TIME_BW_UPDATES,
-                    MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
             mIsGpsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             if (!mIsGpsEnabled) {
                 showSettingsAlert();
                 return;
             }
+
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0, 0, this);
 
             mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (mCurrentLocation != null) {
@@ -106,6 +106,60 @@ public class DiscGolfLocation extends Service implements LocationListener {
         return mCurrentLocation;
     }
 
+    interface HiResWatcherCallbacks {
+        public abstract void update(int count, int maxCount, Location location, boolean bIsLast);
+    }
+
+    private class HiResWatcher {
+        private HiResWatcherCallbacks cb;
+        private int count;
+        private int maxCount;
+        private List<Location> sampleArray = new ArrayList<Location>();
+        
+        public HiResWatcher(HiResWatcherCallbacks callbacks, Location initialLocation) {
+            cb = callbacks;
+            maxCount = 5;
+            // kick off the process by giving the caller an initial estimate.
+            cb.update(0, maxCount, initialLocation, false);
+        }
+
+        private Location calculateBestLocation() {
+            Location best = null;
+            for (Location sample : sampleArray) {
+                if (sampleArray.size() == maxCount)
+                    Log.d("sample", String.format("%2d:", sampleArray.indexOf(sample)) + sample.toString());
+                if ((best == null) || (sample.getAccuracy() <= best.getAccuracy())) {
+                    best = sample;
+                }
+            }
+            return best;
+        }
+
+        private static final float SAMPLE_ACCURACY_THRESHOLD = (float)10;
+        private static final float SAMPLE_SPEED_THRESHOLD = (float)0.1;
+        public boolean update(Location location) {
+            boolean bIsLast = false;
+            if ((location.getAccuracy() <= SAMPLE_ACCURACY_THRESHOLD) && (location.getSpeed() < SAMPLE_SPEED_THRESHOLD)) {
+                count++;
+                sampleArray.add(location);
+                Location meanLocation = calculateBestLocation();
+                bIsLast = (count >= maxCount);
+                if (bIsLast) Log.d("Final Calculated", meanLocation.toString());
+                cb.update(count, maxCount, meanLocation, bIsLast);
+            } else {
+                Log.d("Reject", location.toString());
+            }
+            return bIsLast;
+        }
+
+    }
+
+    private List<HiResWatcher> mHiResWatchersArray = new ArrayList<HiResWatcher>();
+
+    public void getHiResStationaryLocation(HiResWatcherCallbacks cb) {
+        mHiResWatchersArray.add(new HiResWatcher(cb, mCurrentLocation));
+    }
+
     private List<DiscGolfLocationListener> mListenerArray = new ArrayList<DiscGolfLocationListener>();
 
     public void addListener(DiscGolfLocationListener listener) {
@@ -117,6 +171,12 @@ public class DiscGolfLocation extends Service implements LocationListener {
     }
 
     private void notifyListeners() {
+        for (HiResWatcher hires : mHiResWatchersArray) {
+            boolean bDone = hires.update(mCurrentLocation);
+            if (bDone) {
+                mHiResWatchersArray.remove(hires);
+            }
+        }
         for (DiscGolfLocationListener listener : mListenerArray) {
             listener.onLocationChanged(mCurrentLocation);
         }

@@ -50,7 +50,7 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
                 mState = State.MARKED;
             }
             mCurrentLocation = location;
-            if (mCurrentLocation != null) { Log.d("button-changed", mCurrentLocation.toString()); }
+            //if (mCurrentLocation != null) { Log.d("button-changed", mCurrentLocation.toString()); }
         }
         updateText();
     }

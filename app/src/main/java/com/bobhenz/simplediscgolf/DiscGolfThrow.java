@@ -11,7 +11,7 @@ import android.widget.Button;
 /**
  * Created by bhenz on 7/18/2015.
  */
-public class DiscGolfThrow implements View.OnClickListener {
+public class DiscGolfThrow implements View.OnClickListener, DiscGolfLocation.HiResWatcherCallbacks {
 
     interface ChangeCallbacks {
         public abstract void update(DiscGolfThrow object, Location location);
@@ -83,12 +83,21 @@ public class DiscGolfThrow implements View.OnClickListener {
         }
     }
 
+    public void update(int count, int maxCount, Location location, boolean bIsLast) {
+        mMarkedLocation = location;
+        if (bIsLast) {
+            updateText();
+            mCallbacks.update(this, mMarkedLocation);
+        } else {
+            String buttonText = String.format("Wait... %d", maxCount - count);
+            mMarkButton.setText(buttonText);
+        }
+    }
+
     public void onClick(View v) {
         if (v == mMarkButton) {
             Log.d("onClick mark", "HERE");
-            mMarkedLocation = mDgLocation.getCurrentLocation();
-            updateText();
-            mCallbacks.update(this, mMarkedLocation);
+            mDgLocation.getHiResStationaryLocation(this);
         } else if (v == mRemoveButton) {
             Log.d("onClick remove", "HERE");
             mCallbacks.removing(this);

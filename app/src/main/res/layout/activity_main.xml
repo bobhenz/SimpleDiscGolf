@@ -11,4 +11,24 @@
     android:gravity="top"
     android:orientation="vertical"
     android:background="#000000">
+    <Button
+        android:id="@+id/button_game_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Start New Game"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_dark"
+        android:textColor="#ffffff"
+        android:onClick="onButtonGameStart" />
+    <Button
+        android:id="@+id/button_game_resume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Resume Game"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_dark"
+        android:textColor="#ffffff"/>
+
 </LinearLayout>
