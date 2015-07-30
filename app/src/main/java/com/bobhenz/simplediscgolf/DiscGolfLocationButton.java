@@ -82,4 +82,8 @@ public class DiscGolfLocationButton implements View.OnClickListener, DiscGolfLoc
     public Location getMarkedLocation() {
         return mMarkedLocation;
     }
+
+    public void setMarkedLocation(Location location) {
+        mMarkedLocation = location;
+    }
 }

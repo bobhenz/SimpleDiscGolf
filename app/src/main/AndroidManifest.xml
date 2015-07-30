@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DiscGolfHoleActivity"
+            android:name=".DiscGolfGameActivity"
             android:label="@string/title_activity_disc_golf_hole"
             android:parentActivityName=".MainActivity" >
             <meta-data
