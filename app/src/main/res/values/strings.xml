@@ -6,4 +6,5 @@
     <string name="button_new_game">New Game</string>
     <string name="button_view_game">View Games</string>
     <string name="title_activity_disc_golf_hole">Log Game</string>
+    <string name="title_activity_disc_golf_edit_hole">DiscGolfEditHoleActivity</string>
 </resources>

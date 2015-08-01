@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/top"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.bobhenz.simplediscgolf.DiscGolfGameActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="onButtonEditHoleInfo">
+        <TextView
+            android:id="@+id/id_text_hole_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="72sp"
+            android:text="#5"
+            android:layout_alignParentRight="false"
+            android:textColor="#ffffff"/>
+        <TextView
+            android:id="@+id/id_text_par"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:maxWidth="200sp"
+            android:singleLine="true"
+            android:text="Par: 3"
+            android:textSize="36sp"
+            android:ellipsize="middle"
+            android:layout_alignParentRight="true"
+            android:textColor="#ffffff"/>
+        <TextView
+            android:id="@+id/id_text_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 29"
+            android:layout_below="@id/id_text_par"
+            android:textSize="36sp"
+            android:layout_alignParentRight="true"
+            android:textColor="#ffffff"/>
+    </RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <LinearLayout
+            android:id="@+id/throw_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/button_mark_tee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Synchronize with Tee"
+                android:layout_margin="5dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/button_dark"
+                android:textColor="#ffffff"
+                android:onClick="onButtonEditMarkTee" />
+        </LinearLayout>
+    </ScrollView>
+    <Button
+        android:id="@+id/button_add_throw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Throw"
+        android:layout_margin="5dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/button_dark"
+        android:textColor="#ffffff"
+        android:onClick="onButtonAddThrow" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Penalty Drop"
+        android:layout_margin="5dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/button_dark"
+        android:textColor="#ffffff"
+        android:onClick="" />
+</LinearLayout>

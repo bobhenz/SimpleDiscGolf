@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,9 +32,9 @@ public class DiscGolfGameActivity extends Activity {
         super.onCreate(savedInstanceState);
         mDgLocation = new DiscGolfLocation(DiscGolfGameActivity.this);
         mDgDatabase = new DiscGolfDatabase();
-        setContentView(R.layout.activity_disc_golf_hole);
-        mTeeButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_tee), "tee", "Tee", mDgLocation);
-        mBasketButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_basket), "basket", "Basket", mDgLocation);
+        setContentView(R.layout.activity_disc_golf_game);
+        //mTeeButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_tee), "tee", "Tee", mDgLocation);
+        //mBasketButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_basket), "basket", "Basket", mDgLocation);
         mThrowGroup = (ViewGroup) findViewById(R.id.throw_group);
         mStrokeListManager = new StrokeListManager(mThrowGroup);
         Intent intent = getIntent();
@@ -113,7 +114,7 @@ public class DiscGolfGameActivity extends Activity {
         }
 
         public void update(DiscGolfHoleData hole) {
-            Location startLocation = hole.getInfo().getTeeLocation();
+            Location startLocation = hole.getStartLocation();
             for (int stroke = 1; stroke <= mLayoutArray.size(); stroke++) {
                 Location location = hole.getStrokeLocation(stroke);
                 updateStrokeText(stroke, mMarkButtonArray.get(stroke-1), startLocation, location);
@@ -148,6 +149,27 @@ public class DiscGolfGameActivity extends Activity {
     public void onButtonAddThrow (View view) {
         mGame.getHole().addStroke(null);
         updateGui();
+    }
+
+    public void onButtonEditHoleInfo(View v) {
+        Intent intent = new Intent(this, DiscGolfEditHoleActivity.class);
+        intent.putExtra("HOLE_INFO", (Parcelable)mGame.getHole().getInfo());
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                DiscGolfHoleInfo holeInfo = data.getParcelableExtra("HOLE_INFO");
+                if (holeInfo != null) {
+                    //mDgDatabase.write(newInfo);
+                    mGame.getHole().setInfo(holeInfo);
+                    updateGui();
+                }
+            }
+        }
     }
 
     @Override
@@ -187,4 +209,5 @@ public class DiscGolfGameActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

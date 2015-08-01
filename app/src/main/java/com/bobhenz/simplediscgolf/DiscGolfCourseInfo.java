@@ -26,10 +26,7 @@ public class DiscGolfCourseInfo {
         // If there are no holes yet associated with this course,
         // let's create one using default values.
         //TODO: Read settings here for defaults (e.g. par).
-        DiscGolfHoleInfo hole = new DiscGolfHoleInfo("1", 3, DiscGolfHoleInfo.TeeCategory.UNKNOWN);
-        if (location != null) {
-            hole.setTeeLocation(location);
-        }
+        DiscGolfHoleInfo hole = new DiscGolfHoleInfo("1", 3);
         mHoleArray.add(hole);
         return hole;
     }

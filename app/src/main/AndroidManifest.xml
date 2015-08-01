@@ -25,6 +25,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.bobhenz.simplediscgolf.MainActivity" />
         </activity>
+        <activity
+            android:name=".DiscGolfEditHoleActivity"
+            android:label="@string/title_activity_disc_golf_edit_hole"
+            android:parentActivityName=".DiscGolfGameActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.bobhenz.simplediscgolf.DiscGolfGameActivity" />
+        </activity>
     </application>
 
 </manifest>

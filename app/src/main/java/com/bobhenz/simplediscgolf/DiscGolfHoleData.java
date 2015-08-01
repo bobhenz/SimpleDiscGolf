@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class DiscGolfHoleData {
     private List<Location> mStrokeArray = new ArrayList<Location>();
-
+    private Location mStartLocation;
     private DiscGolfHoleInfo mHoleInfo;
 
     public DiscGolfHoleData(DiscGolfHoleInfo holeInfo) {
@@ -25,6 +25,14 @@ public class DiscGolfHoleData {
         if ((mStrokeArray.size() >= stroke) && (stroke > 0)) {
             mStrokeArray.remove(stroke - 1);
         }
+    }
+
+    public void setStartLocation(Location location) {
+        mStartLocation = location;
+    }
+
+    public Location getStartLocation() {
+        return mStartLocation;
     }
 
     public Location getStrokeLocation(int stroke) {
@@ -49,4 +57,7 @@ public class DiscGolfHoleData {
         return mHoleInfo;
     }
 
+    public void setInfo(DiscGolfHoleInfo holeInfo) {
+        mHoleInfo = holeInfo;
+    }
 }
