@@ -195,13 +195,11 @@ public class DiscGolfGameActivity extends Activity {
         Log.d("main", "onResume");
         super.onResume();
         mDgLocation.start();
-        mDgDatabase.refresh();
     }
 
     @Override
     protected void onPause() {
         Log.d("main", "onPause");
-        mDgDatabase.flush();
         mDgLocation.stop();
         super.onPause();
     }

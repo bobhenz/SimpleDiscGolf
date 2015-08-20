@@ -20,8 +20,6 @@ public class DiscGolfGameData {
         }
 
         database.debugPrintCourses();
-        database.createNewCourse();
-        database.debugPrintCourses();
     }
 
     public DiscGolfCourseInfo getCourse() {
