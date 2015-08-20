@@ -16,8 +16,12 @@ public class DiscGolfGameData {
     DiscGolfGameData(DiscGolfDatabase database, Location location) {
         mCourse = database.guessCourse(location);
         if (mCourse == null) {
-            mCourse = new DiscGolfCourseInfo();
+            mCourse = database.createNewCourse();
         }
+
+        database.debugPrintCourses();
+        database.createNewCourse();
+        database.debugPrintCourses();
     }
 
     public DiscGolfCourseInfo getCourse() {

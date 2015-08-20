@@ -31,7 +31,7 @@ public class DiscGolfGameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDgLocation = new DiscGolfLocation(DiscGolfGameActivity.this);
-        mDgDatabase = new DiscGolfDatabase();
+        mDgDatabase = new DiscGolfDatabase(getApplicationContext());
         setContentView(R.layout.activity_disc_golf_game);
         //mTeeButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_tee), "tee", "Tee", mDgLocation);
         //mBasketButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_basket), "basket", "Basket", mDgLocation);
@@ -152,9 +152,27 @@ public class DiscGolfGameActivity extends Activity {
     }
 
     public void onButtonEditHoleInfo(View v) {
-        Intent intent = new Intent(this, DiscGolfEditHoleActivity.class);
-        intent.putExtra("HOLE_INFO", (Parcelable)mGame.getHole().getInfo());
-        startActivityForResult(intent, 1);
+        // Open a dialog giving the user the option of which hole info they
+        // want to use.
+        // TODO: do it here.
+        /*
+        boolean bUserCancelled = false;
+        boolean bUserWantsToEdit = true;
+        if (!bUserCancelled) {
+            DiscGolfHoleInfo holeInfo = mGame.getCourse().getHole(selectedIndex);
+            mGame.getHole().setInfo(holeInfo);
+        }
+        if (bUserWantsToEdit) {
+            Intent intent = new Intent(this, DiscGolfEditHoleActivity.class);
+            intent.putExtra("HOLE_INFO", (Parcelable) mGame.getHole().getInfo());
+            startActivityForResult(intent, 1);
+            DiscGolfHoleInfo holeInfo = intent.getParcelableExtra("HOLE_INFO");
+            boolean bUserWantsToSave = true;
+            if (bUserWantsToSave) {
+                mGame.getHole().setInfo(holeInfo);
+            }
+        }
+        */
     }
 
     @Override

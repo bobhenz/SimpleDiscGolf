@@ -9,12 +9,13 @@ import java.util.EnumMap;
 import java.util.List;
 
 public class DiscGolfHoleInfo implements Parcelable{
-    public enum TeeCategory {UNKNOWN, NOVICE, INTERMEDIATE, ADVANCED};
-    public enum BasketCategory {UNKNOWN, ONLY, A, B, C};
+    public enum TeeCategory {NOVICE, INTERMEDIATE, ADVANCED};
+    public enum BasketCategory {A, B, C};
 
     private String mName;
     private int mPar;
-    private int mDbId;
+    private long mDbId;
+    private long mCourseDbId;
     private EnumMap<TeeCategory, Location> mTeeLocationMap = new EnumMap<TeeCategory, Location>(TeeCategory.class);
     private EnumMap<BasketCategory, Location> mBasketLocationMap = new EnumMap<BasketCategory, Location>(BasketCategory.class);
 /*
@@ -38,8 +39,14 @@ public class DiscGolfHoleInfo implements Parcelable{
         this.mName = mName;
     }
 
-    public int getDbId() {
+    public long getDbId() {
         return mDbId;
+    }
+    public void setCourseDbId(long id) { mCourseDbId = id; }
+    public long getCourseDbId() { return mCourseDbId; }
+
+    public void setDbId(long dbId) {
+        mDbId = dbId;
     }
 
     public Location getTeeLocation(TeeCategory category) {
@@ -92,7 +99,7 @@ public class DiscGolfHoleInfo implements Parcelable{
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(mName);
         out.writeInt(mPar);
-        out.writeInt(mDbId);
+        out.writeLong(mDbId);
         out.writeInt(mTeeLocationMap.size());
         for (TeeCategory key : mTeeLocationMap.keySet()) {
             out.writeInt(key.ordinal());

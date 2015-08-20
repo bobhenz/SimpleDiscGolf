@@ -9,9 +9,37 @@ import java.util.List;
  * Created by bhenz on 7/29/2015.
  */
 public class DiscGolfCourseInfo {
+    private long mDbId;
+    private String mName;
     private List<DiscGolfHoleInfo> mHoleArray = new ArrayList<DiscGolfHoleInfo>();
 
-    public DiscGolfCourseInfo() {
+    public DiscGolfCourseInfo(String name) {
+        mDbId = -1;
+        mName = name;
+    }
+
+    public long getDbId() {
+        return mDbId;
+    }
+
+    public void setDbId(long dbId) {
+        mDbId = dbId;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public List<DiscGolfHoleInfo> getHoleList() {
+        return mHoleArray;
+    }
+
+    public void addHole(DiscGolfHoleInfo holeInfo) {
+        mHoleArray.add(holeInfo);
     }
 
     DiscGolfHoleInfo guessHole(Location location) {
