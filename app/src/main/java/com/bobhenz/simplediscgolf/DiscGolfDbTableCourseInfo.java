@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class DiscGolfDbTableCourseInfo {
     public static abstract class CourseTable implements BaseColumns {
         public static final String TABLE_NAME = "course_info";
@@ -28,6 +30,10 @@ public class DiscGolfDbTableCourseInfo {
 
     public void create(SQLiteDatabase db) {
         db.execSQL(CourseTable.SQL_CREATE);
+    }
+
+    public void destroy(SQLiteDatabase db) {
+        db.execSQL(CourseTable.SQL_DESTROY);
     }
 
     private long getMaximumId(SQLiteDatabase db, String table)
@@ -71,6 +77,19 @@ public class DiscGolfDbTableCourseInfo {
                 throw new RuntimeException("Database entry expected but not found");
             }
         }
+    }
+
+    public ArrayList<Long> readRecent(SQLiteDatabase db, int limit) {
+        String[] columns = {CourseTable._ID};
+        Cursor cursor = db.query(CourseTable.TABLE_NAME, columns, null, null, null, null, null, null);
+        ArrayList<Long> list = new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+             list.add(cursor.getLong(0));
+        }
+        if (list.size() > limit) {
+            list = new ArrayList<>(list.subList(0, limit));
+        }
+        return list;
     }
 
     public void printAll(SQLiteDatabase db) {

@@ -11,10 +11,12 @@ import java.util.List;
 public class DiscGolfHoleData {
     private List<Location> mStrokeArray = new ArrayList<Location>();
     private Location mStartLocation;
-    private DiscGolfHoleInfo mHoleInfo;
+    private long mDbId;
+    private long mHoleInfoDbId;
 
-    public DiscGolfHoleData(DiscGolfHoleInfo holeInfo) {
-        mHoleInfo = holeInfo;
+    public DiscGolfHoleData(long holeInfoDbId) {
+        mDbId = -1;
+        mHoleInfoDbId = holeInfoDbId;
     }
 
     public void addStroke(Location location) {
@@ -53,11 +55,11 @@ public class DiscGolfHoleData {
         return mStrokeArray.size();
     }
 
-    public DiscGolfHoleInfo getInfo() {
-        return mHoleInfo;
+    public long getHoleInfoDbId() {
+        return mHoleInfoDbId;
     }
 
-    public void setInfo(DiscGolfHoleInfo holeInfo) {
-        mHoleInfo = holeInfo;
+    public void setHoleInfoDbId(long dbId) {
+        mHoleInfoDbId = dbId;
     }
 }

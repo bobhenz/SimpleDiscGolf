@@ -29,6 +29,8 @@
         android:text="Resume Game"
         android:layout_margin="5dp"
         android:background="@drawable/button_dark"
-        android:textColor="#ffffff"/>
+        android:textColor="#ffffff"
+        android:onClick="onButtonGameResume"
+        />
 
 </LinearLayout>

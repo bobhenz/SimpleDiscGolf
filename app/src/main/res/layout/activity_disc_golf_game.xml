@@ -8,21 +8,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#000000">
+    <TextView
+        android:id="@+id/text_course_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="Course #1"
+        android:textColor="#ffffff"
+        android:clickable="true"
+        android:onClick="onClickCourse"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:onClick="onButtonEditHoleInfo">
+        android:onClick="onClickEditInfo">
         <TextView
-            android:id="@+id/id_text_hole_id"
+            android:id="@+id/text_hole_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="72sp"
             android:text="#5"
-            android:layout_alignParentRight="false"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/text_course_name"
             android:textColor="#ffffff"/>
         <TextView
-            android:id="@+id/id_text_par"
+            android:id="@+id/text_par"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
@@ -34,11 +44,11 @@
             android:layout_alignParentRight="true"
             android:textColor="#ffffff"/>
         <TextView
-            android:id="@+id/id_text_score"
+            android:id="@+id/text_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Score: 29"
-            android:layout_below="@id/id_text_par"
+            android:layout_below="@id/text_par"
             android:textSize="36sp"
             android:layout_alignParentRight="true"
             android:textColor="#ffffff"/>

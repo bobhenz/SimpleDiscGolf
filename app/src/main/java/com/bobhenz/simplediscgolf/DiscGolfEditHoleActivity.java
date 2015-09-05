@@ -2,9 +2,7 @@ package com.bobhenz.simplediscgolf;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,25 +10,58 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 
 
-public class DiscGolfEditHoleActivity extends Activity {
+public class DiscGolfEditHoleActivity extends Activity
+    implements
+        DialogHoleNumber.Listener {
+    //private DiscGolfCourseInfo mCourseInfo;
     private DiscGolfHoleInfo mHoleInfo;
+    private DiscGolfDatabase mDgDatabase;
+    //private ArrayList<DiscGolfCourseInfo> mTouchedCourseList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disc_golf_edit_hole);
+        mDgDatabase = new DiscGolfDatabase(getApplicationContext());
         Intent intent = getIntent();
-        if (intent != null) {
-            mHoleInfo = intent.getParcelableExtra("HOLE_INFO");
-        } else {
-            mHoleInfo = new DiscGolfHoleInfo("1", 3);
-        }
+        mHoleInfo = intent.getParcelableExtra("hole-info");
+        //mCourseInfo = mDgDatabase.readCourseFromHoleInfoDbId(holeInfoDbId);
+        //mTouchedCourseList.add(mCourseInfo);
+        //mHoleInfo = mCourseInfo.findHoleByDbId(holeInfoDbId);
+        updateGui();
+    }
+
+    private void updateGui() {
+        //TextView courseNameView = (TextView)findViewById(R.id.text_course_name);
+        //courseNameView.setText(mCourseInfo.getName());
+        TextView holeNumberView = (TextView)findViewById(R.id.text_hole_number);
+        holeNumberView.setText(mHoleInfo.getName());
+        TextView parView = (TextView)findViewById(R.id.text_par);
+        parView.setText(String.valueOf(mHoleInfo.getPar()));
+    }
+
+    public void onClickHoleNumber(View view) {
+        new DialogHoleNumber().show(getFragmentManager(), "hole-number");
+    }
+    public void dialogHoleNumberListener(String value) {
+        mHoleInfo.setName(value);
+        updateGui();
+    }
+
+    public void onClickPar(View view) {
+        //new DialogPar().show(getFragmentManager(), "course-name");
+    }
+    public void dialogParListener(int value) {
+        mHoleInfo.setPar(value);
+        updateGui();
+    }
+
 /*
         // Setup the name picker.
         NumberPicker namePicker = (NumberPicker)findViewById(R.id.id_picker_name);
@@ -65,7 +96,6 @@ public class DiscGolfEditHoleActivity extends Activity {
         parPicker.setValue(mHoleInfo.getPar());
         SetNumberPickerTextColor(parPicker, Color.parseColor("#FFFFFF"));
 */
-    }
 
 
     private static boolean SetNumberPickerTextColor(NumberPicker numberPicker, int color)
@@ -117,5 +147,18 @@ public class DiscGolfEditHoleActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickSave(View view) {
+        // Pass back the (possibly modified) hole information.
+        Intent intent = getIntent();
+        intent.putExtra("hole-info", mHoleInfo);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    public void onClickCancel(View view) {
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }

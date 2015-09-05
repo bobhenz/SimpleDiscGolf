@@ -44,33 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:clickable="true"
-                    android:onClick="onClickEditCourse">
-                    <TextView
-                        android:id="@+id/text_label_course"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Course"
-                        android:textSize="20sp"
-                        android:textColor="#ffffff"
-                        android:layout_centerVertical="true"
-                        />
-                    <TextView
-                        android:id="@+id/text_hole_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Course #1"
-                        android:textColor="#ffffff"
-                        android:layout_below="@id/text_label_course"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="20dp"
-                        />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:clickable="true"
-                    android:onClick="onClickEditHoleNumber">
+                    android:onClick="onClickHoleNumber">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -93,7 +67,9 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp">
+                    android:layout_margin="10dp"
+                    android:clickable="true"
+                    android:onClick="onClickPar">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -102,26 +78,15 @@
                         android:textColor="#ffffff"
                         android:layout_centerVertical="true"
                         />
-                    <Button
-                        android:id="@+id/button_par"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Modify"
-                        android:background="@drawable/button_dark"
-                        android:textColor="#ffffff"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        />
                     <TextView
                         android:id="@+id/text_par"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="3"
-                        android:textSize="20sp"
                         android:textColor="#ffffff"
-                        android:layout_toLeftOf="@id/button_par"
-                        android:layout_marginRight="10dp"
+                        android:text="3"
                         android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
                         />
                 </RelativeLayout>
             </LinearLayout>
@@ -408,6 +373,7 @@
             android:textColor="#ffffff"
             android:layout_weight="1"
             android:layout_margin="5dp"
+            android:onClick="onClickSave"
             />
         <Button
             android:id="@+id/button_cancel"
@@ -418,6 +384,7 @@
             android:textColor="#ffffff"
             android:layout_weight="1"
             android:layout_margin="5dp"
+            android:onClick="onClickCancel"
             />
     </LinearLayout>
 </LinearLayout>

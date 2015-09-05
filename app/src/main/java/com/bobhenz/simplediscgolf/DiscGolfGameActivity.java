@@ -13,15 +13,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class DiscGolfGameActivity extends Activity {
+public class DiscGolfGameActivity extends Activity
+    implements
+        DialogCourseName.Listener,
+        DialogCoursePicker.Listener {
     private DiscGolfLocation mDgLocation;
     private DiscGolfDatabase mDgDatabase;
     private DiscGolfGameData mGame;
+    private DiscGolfCourseInfo mCurrentCourse;
+    private DiscGolfHoleInfo mCurrentHole;
     private DiscGolfLocationButton mTeeButton;
     private DiscGolfLocationButton mBasketButton;
     private ViewGroup mThrowGroup;
@@ -41,12 +47,11 @@ public class DiscGolfGameActivity extends Activity {
         boolean bNewGame = intent.getBooleanExtra(MainActivity.EXTRA_GAME_NEW, true);
         if (bNewGame) {
             Location location = mDgLocation.getCurrentLocation();
-            mGame = new DiscGolfGameData(mDgDatabase, location);
-            DiscGolfHoleInfo holeInfo = mGame.getCourse().guessHole(location);
-            mGame.addHole(holeInfo);
-            for (int stroke = 0; stroke < holeInfo.getPar(); stroke++) {
-                mGame.getHole().addStroke(null);
-            }
+            mCurrentCourse = mDgDatabase.guessCourse(location);
+            mGame = new DiscGolfGameData();
+            mCurrentHole = mCurrentCourse.guessHole(mDgDatabase, location);
+            mGame.addHole(mCurrentHole.getDbId());
+            mGame.getHole().addStroke(null);
             updateGui();
         } else {
             /*
@@ -141,9 +146,19 @@ public class DiscGolfGameActivity extends Activity {
     }
 
     private void updateGui() {
-        DiscGolfHoleData hole = mGame.getHole();
-        mStrokeListManager.prepareObjects(hole);
-        mStrokeListManager.update(hole);
+        DiscGolfHoleData holeData = mGame.getHole();
+        mStrokeListManager.prepareObjects(holeData);
+        mStrokeListManager.update(holeData);
+
+        // Update the Hole Info (header)
+        TextView holeNameView = (TextView)findViewById(R.id.text_hole_id);
+        holeNameView.setText(String.format("#%s", mCurrentHole.getName()));
+        TextView scoreView = (TextView) findViewById(R.id.text_score);
+        scoreView.setText(String.format("Score: %d", mGame.getScore()));
+        TextView parView = (TextView)findViewById(R.id.text_par);
+        parView.setText(String.format("Par: %d", mCurrentHole.getPar()));
+        TextView courseNameView = (TextView)findViewById(R.id.text_course_name);
+        courseNameView.setText(mCurrentCourse.getName());
     }
 
     public void onButtonAddThrow (View view) {
@@ -151,7 +166,66 @@ public class DiscGolfGameActivity extends Activity {
         updateGui();
     }
 
-    public void onButtonEditHoleInfo(View v) {
+    public void onClickCourse(View v) {
+        DialogCoursePicker dialog = DialogCoursePicker.getInstance(mCurrentCourse, mDgDatabase, mDgLocation.getCurrentLocation());
+        dialog.show(getFragmentManager(), "course-picker");
+    }
+    public void dialogCoursePickerListener(DialogCoursePicker.Action action, long selectedDbId) {
+        Log.d("picker", String.format("got selection %d (action:%s)", selectedDbId, action));
+        if (action == DialogCoursePicker.Action.SELECT) {
+            mCurrentCourse = mDgDatabase.readCourse(selectedDbId);
+            DiscGolfHoleInfo holeInfo = mCurrentCourse.guessHole(mDgDatabase, mDgLocation.getCurrentLocation());
+            mGame.getHole().setHoleInfoDbId(holeInfo.getDbId());
+        } else if (action == DialogCoursePicker.Action.EDIT) {
+            DialogCourseName dialog = new DialogCourseName();
+            Bundle args = new Bundle();
+            args.putString("default", mCurrentCourse.getName());
+            dialog.setArguments(args);
+            dialog.show(getFragmentManager(), "course-name");
+        }
+        updateGui();
+    }
+    public void dialogCourseNameListener(String value) {
+        if (mCurrentCourse.getIsNull()) {
+            // If the user is changing the name of the null-course,
+            // it is likely they want to change the association of all
+            // the holes they played in that game to the new course they
+            // are creating by naming it.
+
+            // Create a new course. Write it to the database.
+            DiscGolfCourseInfo newCourse = new DiscGolfCourseInfo(value);
+            List<DiscGolfHoleInfo> holeInfoList = new ArrayList<>();
+            List<DiscGolfHoleData> holeDataList = mGame.getHoleList();
+            for (DiscGolfHoleData holeData : holeDataList) {
+                // Copy the holes that were used in the current game from the null course
+                // to the new course.
+                DiscGolfHoleInfo holeInfo = mCurrentCourse.findHoleByDbId(holeData.getHoleInfoDbId());
+                // By clearing the dbId, when we write this hole back into the database, it will
+                // create a new entry thereby preserving the "null holes" and creating a new hole
+                // associated with the new course.
+                holeInfo.setDbId(-1);
+                newCourse.addHole(holeInfo);
+                // remember this for later so we can re-associate the game data with the newly
+                // created holes.
+                holeInfoList.add(holeInfo);
+            } // for
+            mCurrentCourse = newCourse;
+            mDgDatabase.writeCourse(mCurrentCourse);
+            // Now that new holes have been created, we need to associate the game data
+            // with the new holes.
+            for (int index = 0; index < holeDataList.size(); index++) {
+                holeDataList.get(index).setHoleInfoDbId(holeInfoList.get(index).getDbId());
+            } // for
+            //TODO: mDgDatabase.writeGame(mGame);
+        } else {
+            mCurrentCourse.setName(value);
+            mDgDatabase.writeCourse(mCurrentCourse);
+        }
+
+        updateGui();
+    }
+
+    public void onClickEditInfo(View v) {
         // Open a dialog giving the user the option of which hole info they
         // want to use.
         // TODO: do it here.
@@ -173,20 +247,23 @@ public class DiscGolfGameActivity extends Activity {
             }
         }
         */
+        /* Open the current hole for editting. */
+        Intent intent = new Intent(this, DiscGolfEditHoleActivity.class);
+        intent.putExtra("hole-info", mCurrentHole);
+        startActivityForResult(intent, 1);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                DiscGolfHoleInfo holeInfo = data.getParcelableExtra("HOLE_INFO");
-                if (holeInfo != null) {
-                    //mDgDatabase.write(newInfo);
-                    mGame.getHole().setInfo(holeInfo);
-                    updateGui();
-                }
-            }
+        if (resultCode == RESULT_OK) {
+            DiscGolfHoleInfo holeInfo = data.getParcelableExtra("hole-info");
+            // Replace the old hole information with the new hole information.
+            mCurrentCourse.removeHole(mCurrentHole);
+            mCurrentHole = holeInfo;
+            mCurrentCourse.addHole(mCurrentHole);
+            mDgDatabase.writeCourse(mCurrentCourse);
+            updateGui();
         }
     }
 

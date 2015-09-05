@@ -17,6 +17,7 @@ public class DiscGolfHoleInfo implements Parcelable{
     private long mDbId;
     private long mCourseDbId;
     private EnumMap<TeeCategory, Location> mTeeLocationMap = new EnumMap<TeeCategory, Location>(TeeCategory.class);
+    boolean mRoughLocation;
     private EnumMap<BasketCategory, Location> mBasketLocationMap = new EnumMap<BasketCategory, Location>(BasketCategory.class);
 /*
     public DiscGolfHoleInfo() {
@@ -29,8 +30,10 @@ public class DiscGolfHoleInfo implements Parcelable{
         mDbId = -1;
         mName = name;
         mPar = par;
+        mRoughLocation = false;
     }
 
+    public boolean getIsRoughLocation() { return mRoughLocation; }
     public String getName() {
         return mName;
     }
@@ -55,8 +58,16 @@ public class DiscGolfHoleInfo implements Parcelable{
 
     public void setTeeLocation(TeeCategory category, Location location) {
         mTeeLocationMap.put(category, location);
+        mRoughLocation = false;
     }
 
+    public void setRoughLocation(Location location) {
+        if ((mTeeLocationMap.get(TeeCategory.ADVANCED) == null) && (location != null)){
+            mTeeLocationMap.put(TeeCategory.ADVANCED, location);
+            mRoughLocation = true;
+        }
+
+    }
     public Location getBasketLocation(BasketCategory category) {
         return mBasketLocationMap.get(category);
     }
@@ -81,13 +92,17 @@ public class DiscGolfHoleInfo implements Parcelable{
     private DiscGolfHoleInfo(Parcel in) {
         mName = in.readString();
         mPar = in.readInt();
-        mDbId = in.readInt();
+        mDbId = in.readLong();
+        mCourseDbId = in.readLong();
         int teeCount = in.readInt();
         for (int count = 0; count < teeCount; count++) {
             TeeCategory key = TeeCategory.values()[in.readInt()];
             Location location = in.readParcelable(Location.class.getClassLoader());
             mTeeLocationMap.put(key, location);
         }
+
+        mRoughLocation = in.readInt() == 1 ? true : false;
+
         int basketCount = in.readInt();
         for (int count = 0; count < basketCount; count++) {
             BasketCategory key = BasketCategory.values()[in.readInt()];
@@ -100,11 +115,15 @@ public class DiscGolfHoleInfo implements Parcelable{
         out.writeString(mName);
         out.writeInt(mPar);
         out.writeLong(mDbId);
+        out.writeLong(mCourseDbId);
         out.writeInt(mTeeLocationMap.size());
         for (TeeCategory key : mTeeLocationMap.keySet()) {
             out.writeInt(key.ordinal());
             out.writeParcelable(mTeeLocationMap.get(key), flags);
         }
+
+        out.writeInt(mRoughLocation ? 1 : 0);
+
         out.writeInt(mBasketLocationMap.size());
         for (BasketCategory key : mBasketLocationMap.keySet()) {
             out.writeInt(key.ordinal());

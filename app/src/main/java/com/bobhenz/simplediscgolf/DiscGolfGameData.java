@@ -9,34 +9,55 @@ import java.util.List;
  * Created by bhenz on 7/29/2015.
  */
 public class DiscGolfGameData {
-    private DiscGolfCourseInfo mCourse;
-    private List<DiscGolfHoleData> holeArray = new ArrayList<DiscGolfHoleData>();
-    private DiscGolfHoleData mCurrentHole;
+    private List<DiscGolfHoleData> mHoleArray = new ArrayList<DiscGolfHoleData>();
+    private int mCurrentHoleIndex;
 
-    DiscGolfGameData(DiscGolfDatabase database, Location location) {
-        mCourse = database.guessCourse(location);
-        if (mCourse == null) {
-            mCourse = database.createNewCourse();
+    DiscGolfGameData() {
+        mCurrentHoleIndex = 0;
+    }
+
+    public void setCurrentHole(int index) {
+        mCurrentHoleIndex = index;
+    }
+
+    public boolean gotoPriorHole() {
+        if (mCurrentHoleIndex > 0) {
+            mCurrentHoleIndex--;
+            return true;
+        } else {
+            return false;
         }
-
-        database.debugPrintCourses();
     }
 
-    public DiscGolfCourseInfo getCourse() {
-        return mCourse;
+    public boolean gotoNextHole() {
+        if (mCurrentHoleIndex < mHoleArray.size() - 1) {
+            mCurrentHoleIndex++;
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void setCourse(DiscGolfCourseInfo course) {
-        this.mCourse = course;
+    public List<DiscGolfHoleData> getHoleList() {
+        return mHoleArray;
     }
 
-    public void addHole(DiscGolfHoleInfo holeInfo) {
-        DiscGolfHoleData hole = new DiscGolfHoleData(holeInfo);
-        holeArray.add(hole);
-        mCurrentHole = hole;
+    public void addHole(long holeInfoDbId) {
+        DiscGolfHoleData hole = new DiscGolfHoleData(holeInfoDbId);
+        mHoleArray.add(hole);
+        mCurrentHoleIndex = mHoleArray.size()-1;
+    }
+
+    public int getScore() {
+        int totalScore = 0;
+        for (DiscGolfHoleData hole : mHoleArray) {
+            totalScore += hole.getStrokeCount();
+        } // for
+
+        return totalScore;
     }
 
     public DiscGolfHoleData getHole() {
-        return mCurrentHole;
+        return mHoleArray.get(mCurrentHoleIndex);
     }
 }
