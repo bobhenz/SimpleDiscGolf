@@ -24,9 +24,15 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    public void onButtonGameResume(View view) {
+    public void onButtonDebug(View view) {
+        DiscGolfDatabase database = new DiscGolfDatabase(getApplicationContext());
+        database.debugPrintCourses();
     }
 
+    public void onButtonClearDb(View v) {
+        DiscGolfDatabase database = new DiscGolfDatabase(getApplicationContext());
+        database.debugEraseAll();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

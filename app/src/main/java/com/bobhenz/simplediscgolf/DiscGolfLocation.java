@@ -46,7 +46,7 @@ public class DiscGolfLocation extends Service implements LocationListener {
         if (mLocationManager != null) {
             mIsGpsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             if (!mIsGpsEnabled) {
-                showSettingsAlert();
+                //showSettingsAlert();
                 return;
             }
 

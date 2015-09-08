@@ -29,7 +29,6 @@
             android:textSize="72sp"
             android:text="#5"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/text_course_name"
             android:textColor="#ffffff"/>
         <TextView
             android:id="@+id/text_par"

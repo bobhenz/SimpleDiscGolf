@@ -8,7 +8,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 public class DiscGolfDatabase {
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "DiscGolfCourses.db";
 
     private DbHelper mDatabase;
@@ -30,7 +30,6 @@ public class DiscGolfDatabase {
             mTableHoleInfo.destroy(db);
             mTableCourseInfo.create(db);
             mTableHoleInfo.create(db);
-
         }
 
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -73,11 +72,15 @@ public class DiscGolfDatabase {
     }
 
     private DiscGolfCourseInfo readCourse(SQLiteDatabase db, long courseDbId) {
-        DiscGolfCourseInfo courseInfo = mTableCourseInfo.read(db, courseDbId);
-        if (courseInfo != null) {
-            mTableHoleInfo.appendCourseHoles(db, courseInfo);
+        if (courseDbId == DiscGolfCourseInfo.NULL_COURSE_DB_ID) {
+            return createNullCourse(db);
+        } else {
+            DiscGolfCourseInfo courseInfo = mTableCourseInfo.read(db, courseDbId);
+            if (courseInfo != null) {
+                mTableHoleInfo.appendCourseHoles(db, courseInfo);
+            }
+            return courseInfo;
         }
-        return courseInfo;
     }
 
     public DiscGolfCourseInfo readCourse(long courseDbId) {
@@ -167,8 +170,18 @@ public class DiscGolfDatabase {
     }
 
     public void debugPrintCourses() {
-        Log.d("DB debug", "Course List");
         SQLiteDatabase db = mDatabase.getReadableDatabase();
+        Log.d("DB debug", "Course List");
         mTableCourseInfo.printAll(db);
+        Log.d("DB debug", "Hole List");
+        mTableHoleInfo.printAll(db);
+
+    }
+    public void debugEraseAll() {
+        SQLiteDatabase db = mDatabase.getReadableDatabase();
+        mTableCourseInfo.destroy(db);
+        mTableHoleInfo.destroy(db);
+        mTableCourseInfo.create(db);
+        mTableHoleInfo.create(db);
     }
 }

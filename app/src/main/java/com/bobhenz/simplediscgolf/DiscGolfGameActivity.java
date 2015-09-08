@@ -37,6 +37,7 @@ public class DiscGolfGameActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDgLocation = new DiscGolfLocation(DiscGolfGameActivity.this);
+        mDgLocation.start();
         mDgDatabase = new DiscGolfDatabase(getApplicationContext());
         setContentView(R.layout.activity_disc_golf_game);
         //mTeeButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_tee), "tee", "Tee", mDgLocation);

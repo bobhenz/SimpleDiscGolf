@@ -93,10 +93,10 @@ public class DiscGolfDbTableCourseInfo {
     }
 
     public void printAll(SQLiteDatabase db) {
-        String[] columns = {CourseTable.COLUMN_NAME_NAME};
+        String[] columns = {CourseTable.COLUMN_NAME_NAME, CourseTable._ID};
         Cursor cursor = db.query(CourseTable.TABLE_NAME, columns, null, null, null, null, null, null);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            Log.d("Name:", cursor.getString(0));
+            Log.d("Course", String.format("\"%s\",%d", cursor.getString(0), cursor.getLong(1)));
         }
     }
 }

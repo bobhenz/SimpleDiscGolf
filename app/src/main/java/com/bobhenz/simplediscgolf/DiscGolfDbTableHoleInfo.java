@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +59,7 @@ public class DiscGolfDbTableHoleInfo {
     public void create(SQLiteDatabase db) {
         db.execSQL(HoleTable.SQL_CREATE);
         // Create a bunch of "null" holes that the "null course" can utilize.
-        for (int holeNumber = 1; holeNumber < 99; holeNumber++) {
+        for (int holeNumber = 1; holeNumber <= 99; holeNumber++) {
             DiscGolfHoleInfo newHole = new DiscGolfHoleInfo(String.format("%d", holeNumber), 3);
             newHole.setCourseDbId(DiscGolfCourseInfo.NULL_COURSE_DB_ID);
             write(db, newHole);
@@ -230,4 +231,11 @@ public class DiscGolfDbTableHoleInfo {
 
         return courseList;
     }
-}
+
+    public void printAll(SQLiteDatabase db) {
+        String[] columns = {HoleTable.COLUMN_NAME_NUMBER, HoleTable._ID, HoleTable.COLUMN_NAME_COURSE_ID, };
+        Cursor cursor = db.query(HoleTable.TABLE_NAME, columns, null, null, null, null, null, null);
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Log.d("Hole", String.format("\"%s\",%d (course:%d)", cursor.getString(0), cursor.getLong(1), cursor.getLong(2)));
+        }
+    }}
