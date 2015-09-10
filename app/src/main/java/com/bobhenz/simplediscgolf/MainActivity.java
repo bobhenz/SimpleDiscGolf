@@ -10,7 +10,7 @@ import android.view.View;
 
 
 public class MainActivity extends Activity {
-    public final static String EXTRA_GAME_NEW = "com.bobhenz.simplediscgolf.GAME_NEW";
+    public final static String EXTRA_GAME_ID = "com.bobhenz.simplediscgolf.GAME_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
 
     public void onButtonGameStart(View view) {
         Intent intent = new Intent(getApplicationContext(), DiscGolfGameActivity.class);
-        intent.putExtra(EXTRA_GAME_NEW, true);
+        intent.putExtra(EXTRA_GAME_ID, -1);
         startActivity(intent);
     }
 

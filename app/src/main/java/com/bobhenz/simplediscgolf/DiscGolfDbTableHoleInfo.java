@@ -96,13 +96,17 @@ public class DiscGolfDbTableHoleInfo {
         holeInfo.setPar(cursor.getInt(cursor.getColumnIndexOrThrow(HoleTable.COLUMN_NAME_PAR)));
 
         Location location;
+        boolean isRoughLocation = cursor.getInt(cursor.getColumnIndexOrThrow(HoleTable.COLUMN_NAME_IS_ROUGH_LOCATION)) != 0;
         location = readLocationFromDbCursor(cursor, HoleTable.COLUMN_NAME_PREFIX_TEE_ADVANCED);
-        holeInfo.setTeeLocation(DiscGolfHoleInfo.TeeCategory.ADVANCED, location);
-        location = readLocationFromDbCursor(cursor, HoleTable.COLUMN_NAME_PREFIX_TEE_INTERMEDIATE);
-        holeInfo.setTeeLocation(DiscGolfHoleInfo.TeeCategory.INTERMEDIATE, location);
-        location = readLocationFromDbCursor(cursor, HoleTable.COLUMN_NAME_PREFIX_TEE_NOVICE);
-        holeInfo.setTeeLocation(DiscGolfHoleInfo.TeeCategory.NOVICE, location);
-
+        if (isRoughLocation) {
+            holeInfo.setRoughLocation(location);
+        } else {
+            holeInfo.setTeeLocation(DiscGolfHoleInfo.TeeCategory.ADVANCED, location);
+            location = readLocationFromDbCursor(cursor, HoleTable.COLUMN_NAME_PREFIX_TEE_INTERMEDIATE);
+            holeInfo.setTeeLocation(DiscGolfHoleInfo.TeeCategory.INTERMEDIATE, location);
+            location = readLocationFromDbCursor(cursor, HoleTable.COLUMN_NAME_PREFIX_TEE_NOVICE);
+            holeInfo.setTeeLocation(DiscGolfHoleInfo.TeeCategory.NOVICE, location);
+        }
         return holeInfo;
     }
 

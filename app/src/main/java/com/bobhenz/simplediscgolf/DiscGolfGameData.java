@@ -11,9 +11,21 @@ import java.util.List;
 public class DiscGolfGameData {
     private List<DiscGolfHoleData> mHoleArray = new ArrayList<DiscGolfHoleData>();
     private int mCurrentHoleIndex;
+    private long mStartTimeMilliseconds;
+    private long mDbId;
 
     DiscGolfGameData() {
         mCurrentHoleIndex = 0;
+        mStartTimeMilliseconds = System.currentTimeMillis();
+        mDbId = -1;
+    }
+
+    public long getDbId() { return mDbId; }
+    public void setDbId(long id) { mDbId = id; }
+    public void setStartTime(long timeMilliseconds) { mStartTimeMilliseconds = timeMilliseconds; }
+
+    public boolean isEmpty() {
+        return mHoleArray.isEmpty();
     }
 
     public void setCurrentHole(int index) {
@@ -44,6 +56,11 @@ public class DiscGolfGameData {
 
     public void addHole(long holeInfoDbId) {
         DiscGolfHoleData hole = new DiscGolfHoleData(holeInfoDbId);
+        mHoleArray.add(hole);
+        mCurrentHoleIndex = mHoleArray.size()-1;
+    }
+
+    public void addHole(DiscGolfHoleData hole) {
         mHoleArray.add(hole);
         mCurrentHoleIndex = mHoleArray.size()-1;
     }

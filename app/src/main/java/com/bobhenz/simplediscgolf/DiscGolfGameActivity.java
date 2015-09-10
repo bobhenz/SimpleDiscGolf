@@ -12,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class DiscGolfGameActivity extends Activity
     private DiscGolfLocationButton mBasketButton;
     private ViewGroup mThrowGroup;
     private StrokeListManager mStrokeListManager;
+    private Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,34 +43,50 @@ public class DiscGolfGameActivity extends Activity
         mDgLocation.start();
         mDgDatabase = new DiscGolfDatabase(getApplicationContext());
         setContentView(R.layout.activity_disc_golf_game);
+
+        mSpinner = (Spinner)findViewById(R.id.spinner_tee_type);
+        List<String> teeTypeOptions = new ArrayList<>();
+        teeTypeOptions.add("Advanced");
+        teeTypeOptions.add("Intermediate");
+        teeTypeOptions.add("Novice");
+        ArrayAdapter<String> teeTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teeTypeOptions);
+        teeTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(teeTypeAdapter);
+
         //mTeeButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_tee), "tee", "Tee", mDgLocation);
         //mBasketButton = new DiscGolfLocationButton((Button)findViewById(R.id.button_basket), "basket", "Basket", mDgLocation);
         mThrowGroup = (ViewGroup) findViewById(R.id.throw_group);
         mStrokeListManager = new StrokeListManager(mThrowGroup);
         Intent intent = getIntent();
-        boolean bNewGame = intent.getBooleanExtra(MainActivity.EXTRA_GAME_NEW, true);
-        if (bNewGame) {
+        long gameDbId = intent.getLongExtra(MainActivity.EXTRA_GAME_ID, -1);
+        mGame = mDgDatabase.readGame(gameDbId);
+        if (mGame == null) {
             Location location = mDgLocation.getCurrentLocation();
             mCurrentCourse = mDgDatabase.guessCourse(location);
             mGame = new DiscGolfGameData();
             mCurrentHole = mCurrentCourse.guessHole(mDgDatabase, location);
-            mGame.addHole(mCurrentHole.getDbId());
-            mGame.getHole().addStroke(null);
-            updateGui();
+            Button addThrowButton = (Button)findViewById(R.id.button_add_throw);
+            addThrowButton.setEnabled(false);
         } else {
-            /*
-            Location location = mDgLocation.getCurrentLocation();
-            String gameId = intent.getStringExtra(MainActivity.EXTRA_GAME_ID, "");
-            DiscGolfGame game = mDgDatabase.getGame(gameId);
-            DiscGolfCourseInfo course = mDgDatabase.getLocalCourse(game);
-            DiscGolfHoleInfo whichhole = mDgDatabase.getLocalGuessHole(location, course);
-            DiscGolfHoleInfo hole = game.getHole(whichhole.getName());
-            if (hole == null) {
-                // If the hole wasn't created yet for this game, then
-                // just use the "guess" to initialize the hole.
-                hole = whichhole;
-            }
-            */
+            mCurrentCourse = mDgDatabase.readCourseFromHoleInfoDbId(mGame.getHole().getHoleInfoDbId());
+            mCurrentHole = mCurrentCourse.findHoleByDbId(mGame.getHole().getHoleInfoDbId());
+            Button addThrowButton = (Button)findViewById(R.id.button_add_throw);
+            addThrowButton.setEnabled(true);
+        }
+    }
+
+    public void onClickSynchTee(View view) {
+        // With this click, the user is acknowledging that they
+        // are actually going to play this hole.
+        String text = mSpinner.getSelectedItem().toString();
+        Log.d("sync-tee", text);
+        if (mGame.isEmpty()) {
+            Button addThrowButton = (Button)findViewById(R.id.button_add_throw);
+            addThrowButton.setEnabled(true);
+            mGame.addHole(mCurrentHole.getDbId());
+            mGame.getHole().addStroke(null, false);
+
+            updateGui();
         }
     }
 
@@ -96,6 +115,7 @@ public class DiscGolfGameActivity extends Activity
                 mLayoutArray.add(layout);
                 mParentView.addView(layout);
                 guiRowCount++;
+                Log.d("updategui", "added-row");
             } // while
 
             // Reduce the number of rows if we have too many.
@@ -105,6 +125,7 @@ public class DiscGolfGameActivity extends Activity
                 mMarkButtonArray.remove(guiRowCount - 1);
                 mRemoveButtonArray.remove(guiRowCount - 1);
                 guiRowCount--;
+                Log.d("updategui", "removed-row");
             } // while
         }
 
@@ -162,8 +183,13 @@ public class DiscGolfGameActivity extends Activity
         courseNameView.setText(mCurrentCourse.getName());
     }
 
-    public void onButtonAddThrow (View view) {
-        mGame.getHole().addStroke(null);
+    public void onButtonAddThrow(View view) {
+        mGame.getHole().addStroke(null, false);
+        updateGui();
+    }
+
+    public void onButtonAddPenalty(View view) {
+        mGame.getHole().addStroke(null, true);
         updateGui();
     }
 

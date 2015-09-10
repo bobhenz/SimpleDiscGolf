@@ -14,6 +14,9 @@ public class DiscGolfDatabase {
     private DbHelper mDatabase;
     private DiscGolfDbTableCourseInfo mTableCourseInfo;
     private DiscGolfDbTableHoleInfo mTableHoleInfo;
+    private DiscGolfDbTableGameData mTableGameData;
+    private DiscGolfDbTableHoleData mTableHoleData;
+    private DiscGolfDbTableStrokeData mTableStrokeData;
 
     private class DbHelper extends SQLiteOpenHelper {
         DbHelper(Context context) {
@@ -23,13 +26,21 @@ public class DiscGolfDatabase {
         public void onCreate(SQLiteDatabase db) {
             mTableCourseInfo.create(db);
             mTableHoleInfo.create(db);
+            mTableGameData.create(db);
+            mTableHoleData.create(db);
+            mTableStrokeData.create(db);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             mTableCourseInfo.destroy(db);
             mTableHoleInfo.destroy(db);
+            mTableGameData.destroy(db);
+            mTableHoleData.destroy(db);
+            mTableStrokeData.destroy(db);
             mTableCourseInfo.create(db);
             mTableHoleInfo.create(db);
+            mTableHoleData.create(db);
+            mTableStrokeData.create(db);
         }
 
         public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -41,6 +52,9 @@ public class DiscGolfDatabase {
         mDatabase = new DbHelper(context);
         mTableCourseInfo = new DiscGolfDbTableCourseInfo();
         mTableHoleInfo = new DiscGolfDbTableHoleInfo();
+        mTableGameData = new DiscGolfDbTableGameData();
+        mTableHoleData = new DiscGolfDbTableHoleData();
+        mTableStrokeData = new DiscGolfDbTableStrokeData();
     }
 
     DiscGolfCourseInfo createNewCourse(Location location) {
@@ -167,6 +181,18 @@ public class DiscGolfDatabase {
         // needs to be a method on mTableGameInfo.
         ArrayList<Long> list = mTableCourseInfo.readRecent(db, maximumCount);
         return list;
+    }
+
+    public DiscGolfGameData readGame(long dbId) {
+        SQLiteDatabase db = mDatabase.getReadableDatabase();
+        DiscGolfGameData game = mTableGameData.read(db, dbId);
+        if (game != null) {
+            mTableHoleData.appendGameHoles(db, game);
+            for (DiscGolfHoleData hole : game.getHoleList()) {
+                mTableStrokeData.appendHoleStrokes(db, hole);
+            }
+        }
+        return game;
     }
 
     public void debugPrintCourses() {
